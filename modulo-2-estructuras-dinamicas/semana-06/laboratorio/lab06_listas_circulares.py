@@ -1,9 +1,9 @@
 """
 Lab 6 — Listas Circulares y Problema de Josephus
 INF 222 Estructura de Datos · Semestre 2026-2
-Estudiante: _________________________
-Grupo: ______________________________
-Fecha: ______________________________
+Estudiante: Keila Hurtado
+Grupo: _Salon 108
+Fecha: octubre 2026
 """
 
 
@@ -108,13 +108,27 @@ class ListaCircularConCabeza:
 
     def insertar_final(self, dato):
         """Inserta dato justo antes del centinela (al final). O(n) sin puntero al final."""
-        # TODO: recorre hasta el nodo cuyo siguiente es el centinela, luego inserta
-        pass
+        nuevo = Nodo(dato)
+        ultimo = self._centinela
+        # Recorre hasta el nodo cuyo siguiente es el centinela
+        while ultimo.siguiente is not self._centinela:
+            ultimo = ultimo.siguiente
+        nuevo.siguiente = self._centinela
+        ultimo.siguiente = nuevo
+        self._tamanio += 1
 
     def eliminar(self, dato):
         """Elimina la primera ocurrencia de dato. Retorna True si se encontró."""
-        # TODO: recorre buscando el dato; al encontrarlo, desencadena el nodo
-        pass
+        anterior = self._centinela
+        actual = self._centinela.siguiente
+        while actual is not self._centinela:
+            if actual.dato == dato:
+                anterior.siguiente = actual.siguiente  # desencadena el nodo
+                self._tamanio -= 1
+                return True
+            anterior = actual
+            actual = actual.siguiente
+        return False
 
     def recorrer(self):
         """Retorna lista con todos los datos desde el inicio hasta antes del centinela."""
@@ -134,7 +148,6 @@ class ListaCircularConCabeza:
             return "[C] → [C] (vacía)"
         return "[C] → " + " → ".join(str(d) for d in datos) + " → [C]"
 
-
 # =============================================================================
 # PARTE 3: PROBLEMA DE JOSEPHUS
 # n personas en círculo, contar hasta k, eliminar, repetir.
@@ -151,12 +164,16 @@ def josephus(n, k):
     for i in range(1, n + 1):
         lista.insertar_final(i)
 
-    # TODO: mientras quede más de una persona:
-    #   - cuenta k posiciones avanzando la "cola" (el nodo antes del que se elimina)
-    #   - elimina el nodo que corresponde
-    # Cuando quede una persona, retorna su dato
+    while lista.tamanio() > 1:
+        # _cola es el nodo anterior al primero de la ronda;
+        # avanzar k-1 veces lo deja justo antes de la víctima
+        for _ in range(k - 1):
+            lista._cola = lista._cola.siguiente
+        victima = lista._cola.siguiente
+        lista._cola.siguiente = victima.siguiente  # desenlaza a la víctima
+        lista._tamanio -= 1
 
-    pass
+    return lista._cola.dato
 
 
 # =============================================================================
@@ -196,3 +213,6 @@ if __name__ == "__main__":
     print(f"josephus(7, 3) = {josephus(7, 3)}  (esperado: 4)")
     print(f"josephus(5, 2) = {josephus(5, 2)}  (esperado: 3)")
     print(f"josephus(1, 5) = {josephus(1, 5)}  (esperado: 1)")
+# =============================================================================
+# Declaro que utilize la herramienta de IA claude para ayudarme a completar este código.
+# =============================================================================
