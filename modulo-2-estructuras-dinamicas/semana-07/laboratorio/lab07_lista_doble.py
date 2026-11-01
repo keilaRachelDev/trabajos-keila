@@ -1,9 +1,9 @@
 """
 Lab 7 — Lista Doblemente Enlazada
 INF 222 Estructura de Datos · Semestre 2026-2
-Estudiante: _________________________
-Grupo: ______________________________
-Fecha: ______________________________
+Estudiante: Keila Hurtado.
+Grupo: Salon 108.
+Fecha: Octubre 2026
 """
 
 
@@ -46,13 +46,34 @@ class ListaDoblementeEnlazada:
 
     def insertar_final(self, dato):
         """Inserta dato al final. O(1)."""
-        # TODO
-        pass
+        nuevo = NodoDoble(dato)
+        if self._cola is None:
+            self._cabeza = nuevo
+            self._cola = nuevo
+        else:
+            nuevo.anterior = self._cola
+            self._cola.siguiente = nuevo
+            self._cola = nuevo
+        self._tamanio += 1
 
     def insertar_en_posicion(self, posicion, dato):
         """Inserta en la posición dada (0-indexed). O(n)."""
-        # TODO: casos: posición 0 → insertar_inicio, posición >= tamaño → insertar_final
-        pass
+        if posicion <= 0:
+            self.insertar_inicio(dato)
+            return
+        if posicion >= self._tamanio:
+            self.insertar_final(dato)
+            return
+        # Caso intermedio: llego al nodo que hoy ocupa esa posición
+        actual = self._cabeza
+        for _ in range(posicion):
+            actual = actual.siguiente
+        nuevo = NodoDoble(dato)
+        nuevo.anterior = actual.anterior
+        nuevo.siguiente = actual
+        actual.anterior.siguiente = nuevo
+        actual.anterior = nuevo
+        self._tamanio += 1
 
     # ------------------------------------------------------------------
     # ELIMINACIÓN
@@ -74,14 +95,35 @@ class ListaDoblementeEnlazada:
 
     def eliminar_final(self):
         """Elimina y retorna el dato del final. O(1)."""
-        # TODO: usa self._cola; ajusta self._cola.anterior
-        pass
+        if self._cola is None:
+            raise IndexError("lista vacía")
+        dato = self._cola.dato
+        if self._cabeza == self._cola:  # único elemento
+            self._cabeza = None
+            self._cola = None
+        else:
+            self._cola = self._cola.anterior
+            self._cola.siguiente = None
+        self._tamanio -= 1
+        return dato
 
     def eliminar(self, dato):
         """Elimina la primera ocurrencia de dato. Retorna True si se encontró."""
-        # TODO: recorre desde la cabeza buscando el dato;
-        #       al encontrarlo, desconecta ajustando anterior y siguiente del nodo vecino
-        pass
+        actual = self._cabeza
+        while actual is not None:
+            if actual.dato == dato:
+                if actual is self._cabeza:
+                    self.eliminar_inicio()
+                elif actual is self._cola:
+                    self.eliminar_final()
+                else:
+                    # nodo del medio: los vecinos se enlazan entre sí
+                    actual.anterior.siguiente = actual.siguiente
+                    actual.siguiente.anterior = actual.anterior
+                    self._tamanio -= 1
+                return True
+            actual = actual.siguiente
+        return False
 
     # ------------------------------------------------------------------
     # RECORRIDO
