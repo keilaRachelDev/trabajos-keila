@@ -271,7 +271,20 @@ if __name__ == "__main__":
 # Caso especial al   sí (lista       sí (lista        no, [C] siempre
 # insertar/eliminar  vacía)          vacía)           existe
 # =============================================================================
+# =============================================================================
+# EXPLICACIÓN
+# - insertar_final: recorro hasta el último nodo (el que apunta al centinela)
+#   y enlazo ahí el nuevo nodo, que apunta al centinela.
+# - eliminar: recorro con anterior y actual; al encontrar el dato, anterior
+#   salta al siguiente de actual. Si vuelvo al centinela, retorno False.
+# - josephus: _cola es el nodo anterior al que empieza la cuenta. Avanzo
+#   k-1 veces y desenlazo al siguiente. Repito hasta que quede un nodo.
+#   Debo estar en el anterior porque, para borrar un nodo, hay que cambiar
+#   el enlace del que lo apunta.
+# - El centinela evita casos especiales: siempre hay un nodo antes del primero.
+# =============================================================================
 
 # =============================================================================
+#declaracion de uso de inteligencia artificial.
 # Declaro que utilize la herramienta de IA claude para ayudarme a completar este código.
 # =============================================================================
