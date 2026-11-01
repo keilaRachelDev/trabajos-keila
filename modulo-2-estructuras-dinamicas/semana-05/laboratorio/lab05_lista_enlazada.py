@@ -1,9 +1,9 @@
 """
 Lab 5 — Lista Enlazada Simple
 INF 222 Estructura de Datos · Semestre 2026-2
-Estudiante: _________________________
-Grupo: ______________________________
-Fecha: ______________________________
+Estudiante: Keila Hurtado
+Grupo: Salón 108
+Fecha: septiembre de 2026
 """
 
 
@@ -32,13 +32,22 @@ class ListaEnlazada:
 
     def insertar_inicio(self, dato):
         """Inserta dato al inicio de la lista. O(1)."""
-        # TODO
-        pass
+        nuevo = Nodo(dato)
+        nuevo.siguiente = self._cabeza
+        self._cabeza = nuevo
+        self._tamanio += 1
 
     def insertar_final(self, dato):
         """Inserta dato al final de la lista. O(n)."""
-        # TODO: recorre hasta el último nodo, luego enlaza el nuevo
-        pass
+        nuevo = Nodo(dato)
+        if self._cabeza is None:
+            self._cabeza = nuevo
+        else:
+            actual = self._cabeza
+            while actual.siguiente is not None:
+                actual = actual.siguiente
+            actual.siguiente = nuevo
+        self._tamanio += 1
 
     def insertar_en_posicion(self, posicion, dato):
         """
@@ -47,8 +56,26 @@ class ListaEnlazada:
         Si posición >= tamaño, inserta al final.
         O(n).
         """
-        # TODO
-        pass
+        if posicion < 0:
+            raise IndexError("posición negativa no válida")
+
+        if posicion == 0 or self._cabeza is None:
+            self.insertar_inicio(dato)
+            return
+
+        if posicion >= self._tamanio:
+            self.insertar_final(dato)
+            return
+
+        # Avanzar hasta el nodo anterior a la posición deseada
+        anterior = self._cabeza
+        for _ in range(posicion - 1):
+            anterior = anterior.siguiente
+
+        nuevo = Nodo(dato)
+        nuevo.siguiente = anterior.siguiente
+        anterior.siguiente = nuevo
+        self._tamanio += 1
 
     # ------------------------------------------------------------------
     # ELIMINACIÓN
@@ -62,8 +89,25 @@ class ListaEnlazada:
                      eliminar el único nodo, dato no existe.
         O(n).
         """
-        # TODO
-        pass
+        if self._cabeza is None:
+            return False
+
+        # Caso: el dato está en la cabeza (incluye el único nodo)
+        if self._cabeza.dato == dato:
+            self._cabeza = self._cabeza.siguiente
+            self._tamanio -= 1
+            return True
+
+        # Caso: nodo intermedio o último
+        anterior = self._cabeza
+        while anterior.siguiente is not None:
+            if anterior.siguiente.dato == dato:
+                anterior.siguiente = anterior.siguiente.siguiente
+                self._tamanio -= 1
+                return True
+            anterior = anterior.siguiente
+
+        return False  # no existe
 
     def eliminar_en_posicion(self, posicion):
         """
@@ -71,8 +115,18 @@ class ListaEnlazada:
         Lanza IndexError si la posición está fuera de rango.
         O(n).
         """
-        # TODO
-        pass
+        if posicion < 0 or posicion >= self._tamanio:
+            raise IndexError("posición fuera de rango")
+
+        if posicion == 0:
+            self._cabeza = self._cabeza.siguiente
+        else:
+            anterior = self._cabeza
+            for _ in range(posicion - 1):
+                anterior = anterior.siguiente
+            anterior.siguiente = anterior.siguiente.siguiente
+
+        self._tamanio -= 1
 
     # ------------------------------------------------------------------
     # BÚSQUEDA Y ACCESO
@@ -83,8 +137,12 @@ class ListaEnlazada:
         Retorna True si dato está en la lista, False si no.
         O(n).
         """
-        # TODO
-        pass
+        actual = self._cabeza
+        while actual is not None:
+            if actual.dato == dato:
+                return True
+            actual = actual.siguiente
+        return False
 
     def obtener(self, indice):
         """
@@ -92,22 +150,29 @@ class ListaEnlazada:
         Lanza IndexError si el índice está fuera de rango.
         O(n).
         """
-        # TODO (tarea / trabajo autónomo)
-        pass
+        if indice < 0 or indice >= self._tamanio:
+            raise IndexError("índice fuera de rango")
 
-    # ------------------------------------------------------------------
-    # OTROS
-    # ------------------------------------------------------------------
+        actual = self._cabeza
+        for _ in range(indice):
+            actual = actual.siguiente
+        return actual.dato
 
+    
     def invertir(self):
         """
         Invierte la lista in situ (sin crear nuevos nodos, solo re-enlaza).
         O(n).
         Ejemplo: [1→2→3] queda como [3→2→1]
         """
-        # TODO (tarea / trabajo autónomo)
-        # Pista: necesitas tres punteros: anterior, actual, siguiente
-        pass
+        anterior = None
+        actual = self._cabeza
+        while actual is not None:
+            siguiente = actual.siguiente   # guardar el resto de la lista
+            actual.siguiente = anterior    # invertir el enlace
+            anterior = actual              # avanzar anterior
+            actual = siguiente             # avanzar actual
+        self._cabeza = anterior
 
     def tamanio(self):
         """Retorna el número de elementos. O(1)."""
@@ -118,12 +183,14 @@ class ListaEnlazada:
         return self._cabeza is None
 
     def __str__(self):
-        """Representación: cabeza → [1] → [2] → [3] → None"""
+        """Representación: cabeza → 1 → 2 → 3 → None"""
         nodos = []
         actual = self._cabeza
         while actual is not None:
             nodos.append(str(actual.dato))
             actual = actual.siguiente
+        if not nodos:
+            return "cabeza → None"
         return "cabeza → " + " → ".join(nodos) + " → None"
 
     def __len__(self):
@@ -161,8 +228,11 @@ def comparar_tiempos_insercion_inicio(n=10_000):
     print(f"\nInserción al inicio de {n:,} elementos:")
     print(f"  Lista de Python:  {tiempo_python:.4f} s")
     print(f"  Lista Enlazada:   {tiempo_enlazada:.4f} s")
-    if tiempo_python > 0:
-        print(f"  Razón:            {tiempo_python / tiempo_enlazada:.1f}× más rápida la enlazada")
+    if tiempo_enlazada > 0:
+        if tiempo_python > tiempo_enlazada:
+            print(f"  Razón:            {tiempo_python / tiempo_enlazada:.1f}× más rápida la enlazada")
+        else:
+            print(f"  Razón:            {tiempo_enlazada / tiempo_python:.1f}× más rápida la de Python")
 
 
 # =============================================================================
@@ -180,42 +250,120 @@ if __name__ == "__main__":
     lista.insertar_inicio(30)
     lista.insertar_inicio(20)
     lista.insertar_inicio(10)
-    print(lista)  # esperado: cabeza → [10] → [20] → [30] → None
+    print(lista)  # esperado: cabeza → 10 → 20 → 30 → None
+    assert str(lista) == "cabeza → 10 → 20 → 30 → None"
 
     print("\n--- Insertar al final ---")
     lista.insertar_final(40)
     lista.insertar_final(50)
-    print(lista)  # esperado: ... → [40] → [50] → None
+    print(lista)  # esperado: ... → 40 → 50 → None
+    assert str(lista) == "cabeza → 10 → 20 → 30 → 40 → 50 → None"
 
     print("\n--- Insertar en posición 2 ---")
     lista.insertar_en_posicion(2, 25)
-    print(lista)  # esperado: [10] → [20] → [25] → [30] → [40] → [50]
+    print(lista)  # esperado: 10 → 20 → 25 → 30 → 40 → 50
+    assert str(lista) == "cabeza → 10 → 20 → 25 → 30 → 40 → 50 → None"
 
     print(f"\n--- Tamaño: {len(lista)} (esperado: 6) ---")
+    assert len(lista) == 6
 
     print("\n--- Buscar ---")
     print(f"  buscar(25): {lista.buscar(25)}  (esperado: True)")
     print(f"  buscar(99): {lista.buscar(99)}  (esperado: False)")
+    assert lista.buscar(25) is True
+    assert lista.buscar(99) is False
+
+    print("\n--- Obtener por índice ---")
+    print(f"  obtener(0): {lista.obtener(0)}  (esperado: 10)")
+    print(f"  obtener(5): {lista.obtener(5)}  (esperado: 50)")
+    assert lista.obtener(0) == 10
+    assert lista.obtener(5) == 50
 
     print("\n--- Eliminar el primero (10) ---")
     lista.eliminar(10)
     print(lista)
+    assert str(lista) == "cabeza → 20 → 25 → 30 → 40 → 50 → None"
 
     print("\n--- Eliminar del medio (30) ---")
     lista.eliminar(30)
     print(lista)
+    assert str(lista) == "cabeza → 20 → 25 → 40 → 50 → None"
 
     print("\n--- Eliminar el último (50) ---")
     lista.eliminar(50)
     print(lista)
+    assert str(lista) == "cabeza → 20 → 25 → 40 → None"
 
     print("\n--- Eliminar valor inexistente (99) ---")
-    print(f"  resultado: {lista.eliminar(99)}  (esperado: False)")
+    resultado = lista.eliminar(99)
+    print(f"  resultado: {resultado}  (esperado: False)")
     print(lista)
+    assert resultado is False
+    assert len(lista) == 3
+
+    print("\n--- Eliminar en posición 1 ---")
+    lista.eliminar_en_posicion(1)
+    print(lista)  # esperado: 20 → 40
+    assert str(lista) == "cabeza → 20 → 40 → None"
 
     print("\n--- Invertir lista ---")
+    lista.insertar_final(60)   # lista: 20 → 40 → 60
     lista.invertir()
-    print(lista)  # el orden debe haberse invertido
+    print(lista)  # esperado: 60 → 40 → 20
+    assert str(lista) == "cabeza → 60 → 40 → 20 → None"
+    assert len(lista) == 3
+
+    # -------------------------------------------------------------------------
+    # CASOS BORDE
+    # -------------------------------------------------------------------------
+    print("\n--- Casos borde ---")
+
+    # Lista vacía
+    vacia = ListaEnlazada()
+    assert vacia.es_vacia()
+    assert len(vacia) == 0
+    assert vacia.buscar(1) is False
+    assert vacia.eliminar(1) is False
+    vacia.invertir()                       # no debe fallar
+    assert str(vacia) == "cabeza → None"
+    print("  Lista vacía: OK")
+
+    # Un solo elemento
+    uno = ListaEnlazada()
+    uno.insertar_inicio(7)
+    uno.invertir()
+    assert str(uno) == "cabeza → 7 → None"
+    assert uno.eliminar(7) is True
+    assert uno.es_vacia() and len(uno) == 0
+    print("  Un solo elemento: OK")
+
+    # Posición fuera de rango
+    lista_br = ListaEnlazada()
+    lista_br.insertar_en_posicion(10, "a")     # vacía → queda de primero
+    lista_br.insertar_en_posicion(99, "b")     # >= tamaño → al final
+    assert str(lista_br) == "cabeza → a → b → None"
+
+    for funcion in (lambda: lista_br.obtener(5),
+                    lambda: lista_br.obtener(-1),
+                    lambda: lista_br.eliminar_en_posicion(5),
+                    lambda: lista_br.insertar_en_posicion(-1, "x")):
+        try:
+            funcion()
+            assert False, "debió lanzar IndexError"
+        except IndexError:
+            pass
+    print("  Posición fuera de rango: OK")
 
     print("\n--- Comparación de tiempos ---")
     comparar_tiempos_insercion_inicio(n=50_000)
+
+    print("\n✔ Todas las pruebas pasaron correctamente.")
+
+
+# =============================================================================
+# DECLARACIÓN DE USO DE INTELIGENCIA ARTIFICIAL
+# =============================================================================
+# Declaro que utilicé la herramienta de inteligencia artificial Claude
+# (Anthropic) como apoyo para completar este laboratorio: implementación de
+# los métodos de ListaEnlazada (incluidos invertir y obtener) y de las pruebas
+# de casos borde. Ejecuté el código y revisé su funcionamiento.
