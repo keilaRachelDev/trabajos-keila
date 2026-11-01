@@ -213,6 +213,65 @@ if __name__ == "__main__":
     print(f"josephus(7, 3) = {josephus(7, 3)}  (esperado: 4)")
     print(f"josephus(5, 2) = {josephus(5, 2)}  (esperado: 3)")
     print(f"josephus(1, 5) = {josephus(1, 5)}  (esperado: 1)")
+    
+    
+
+# =============================================================================
+# DIAGRAMA COMPARATIVO
+# =============================================================================
+#
+# 1) LISTA SIMPLE
+#    El último nodo apunta a None.
+#
+#    primero
+#       ↓
+#     [10] → [20] → [30] → None
+#
+#
+# 2) LISTA CIRCULAR (con _cola)
+#    El último nodo apunta de vuelta al primero.
+#    Se guarda _cola (el último), y _cola.siguiente es el primero.
+#
+#                     _cola
+#                       ↓
+#     ┌→ [10] → [20] → [30] ─┐
+#     │   (primero)          │
+#     └──────────────────────┘
+#
+#    Lista con un solo nodo (apunta a sí mismo):
+#
+#       _cola
+#         ↓
+#        [10] ─┐
+#         ↑────┘
+#
+#
+# 3) LISTA CIRCULAR CON NODO CABEZA (centinela)
+#    [C] siempre existe y no guarda dato útil.
+#    El último nodo apunta a [C], no al primer nodo real.
+#
+#     ┌→ [C] → [10] → [20] → [30] ─┐
+#     │                            │
+#     └────────────────────────────┘
+#
+#    Lista vacía (el centinela apunta a sí mismo):
+#
+#        [C] ─┐
+#         ↑───┘
+#
+#
+# COMPARACIÓN
+# -----------------------------------------------------------------------------
+#                    Simple          Circular         Circular con cabeza
+# Fin del recorrido  siguiente=None  contar nodos     volver a [C]
+#                                    o volver al
+#                                    primero
+# Lista vacía        primero=None    _cola=None       [C].siguiente = [C]
+# Insertar al final  O(n) sin cola   O(1) con _cola   O(n) sin puntero final
+# Caso especial al   sí (lista       sí (lista        no, [C] siempre
+# insertar/eliminar  vacía)          vacía)           existe
+# =============================================================================
+
 # =============================================================================
 # Declaro que utilize la herramienta de IA claude para ayudarme a completar este código.
 # =============================================================================
