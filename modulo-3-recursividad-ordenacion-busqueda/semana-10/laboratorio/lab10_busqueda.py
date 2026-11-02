@@ -1,9 +1,9 @@
 """
 Lab 10 — Búsqueda Secuencial y Binaria
 INF 222 Estructura de Datos · Semestre 2026-2
-Estudiante: _________________________
-Grupo: ______________________________
-Fecha: ______________________________
+Estudiante: _Keila Hurtado
+Grupo: Salon 108
+Fecha: noviembre 2026
 """
 
 import time
@@ -21,8 +21,10 @@ def busqueda_secuencial(arr, objetivo):
     No requiere que el arreglo esté ordenado.
     Complejidad: O(n).
     """
-    # TODO
-    pass
+    for i in range(len(arr)):
+        if arr[i] == objetivo:
+            return i
+    return -1
 
 
 # =============================================================================
@@ -38,11 +40,14 @@ def busqueda_binaria_iterativa(arr, objetivo):
     """
     izquierda = 0
     derecha = len(arr) - 1
-    # TODO: implementa el bucle while con izquierda <= derecha
-    # mid = (izquierda + derecha) // 2
-    # Si arr[mid] == objetivo: retorna mid
-    # Si arr[mid] < objetivo: busca en la mitad derecha
-    # Si arr[mid] > objetivo: busca en la mitad izquierda
+    while izquierda <= derecha:
+        mid = (izquierda + derecha) // 2
+        if arr[mid] == objetivo:
+            return mid
+        elif arr[mid] < objetivo:
+            izquierda = mid + 1   # el objetivo está en la mitad derecha
+        else:
+            derecha = mid - 1     # el objetivo está en la mitad izquierda
     return -1
 
 
@@ -68,8 +73,12 @@ def busqueda_binaria_recursiva(arr, objetivo, izquierda=None, derecha=None):
 
     mid = (izquierda + derecha) // 2
 
-    # TODO: implementa los 3 casos (encontrado, buscar izquierda, buscar derecha)
-    pass
+    if arr[mid] == objetivo:
+        return mid
+    elif arr[mid] < objetivo:
+        return busqueda_binaria_recursiva(arr, objetivo, mid + 1, derecha)
+    else:
+        return busqueda_binaria_recursiva(arr, objetivo, izquierda, mid - 1)
 
 
 # =============================================================================
@@ -157,3 +166,10 @@ if __name__ == "__main__":
     print("Comparación de tiempos")
     print("=" * 55)
     comparar_busquedas(n=50_000, repeticiones=500)
+
+# =============================================================================
+# DECLARACIÓN DE USO DE IA
+# Usé Claude (Anthropic) para comprender busqueda_secuencial,
+# busqueda_binaria_iterativa y busqueda_binaria_recursiva. Ejecuté las
+# pruebas y la comparación de tiempos.
+# =============================================================================
