@@ -1,9 +1,9 @@
 """
 Lab 9 — Algoritmos de Ordenación y Comparación de Eficiencia
 INF 222 Estructura de Datos · Semestre 2026-2
-Estudiante: _________________________
-Grupo: ______________________________
-Fecha: ______________________________
+Estudiante: _Keila Hurtado_
+Grupo: Salon 108
+Fecha: _Noviembre 2026_
 """
 
 import time
@@ -25,7 +25,14 @@ def burbuja(arr):
     """
     lista = list(arr)  # trabaja sobre copia
     n = len(lista)
-    # TODO: implementa burbuja con el flag de optimización
+    for i in range(n - 1):
+        hubo_intercambio = False
+        for j in range(n - 1 - i):
+            if lista[j] > lista[j + 1]:
+                lista[j], lista[j + 1] = lista[j + 1], lista[j]
+                hubo_intercambio = True
+        if not hubo_intercambio:
+            break
     return lista
 
 
@@ -38,7 +45,13 @@ def seleccion(arr):
     """
     lista = list(arr)
     n = len(lista)
-    # TODO: implementa seleccion
+    for i in range(n - 1):
+        indice_minimo = i
+        for j in range(i + 1, n):
+            if lista[j] < lista[indice_minimo]:
+                indice_minimo = j
+        if indice_minimo != i:
+            lista[i], lista[indice_minimo] = lista[indice_minimo], lista[i]
     return lista
 
 
@@ -50,7 +63,13 @@ def insercion(arr):
     Complejidad: O(n) mejor caso (casi ordenado), O(n²) promedio y peor caso.
     """
     lista = list(arr)
-    # TODO: implementa insercion
+    for i in range(1, len(lista)):
+        clave = lista[i]
+        j = i - 1
+        while j >= 0 and lista[j] > clave:
+            lista[j + 1] = lista[j]
+            j -= 1
+        lista[j + 1] = clave
     return lista
 
 
@@ -64,8 +83,24 @@ def merge_sort(arr):
     Retorna una nueva lista ordenada.
     Complejidad: O(n log n) en todos los casos. No es in situ (requiere memoria extra).
     """
-    # TODO (opcional / ampliación)
-    pass
+    if len(arr) <= 1:
+        return list(arr)
+    medio = len(arr) // 2
+    izquierda = merge_sort(arr[:medio])
+    derecha = merge_sort(arr[medio:])
+
+    resultado = []
+    i = j = 0
+    while i < len(izquierda) and j < len(derecha):
+        if izquierda[i] <= derecha[j]:
+            resultado.append(izquierda[i])
+            i += 1
+        else:
+            resultado.append(derecha[j])
+            j += 1
+    resultado.extend(izquierda[i:])
+    resultado.extend(derecha[j:])
+    return resultado
 
 
 # =============================================================================
@@ -160,6 +195,18 @@ if __name__ == "__main__":
             print(f"{n:>7,} | {desc:>10} | {t_burbuja:>10.4f} | {t_seleccion:>10.4f} | {t_insercion:>10.4f}")
 
     print("\n¿Qué observas? Escribe tus conclusiones aquí:")
-    print("  1. ___________")
-    print("  2. ___________")
-    print("  3. ___________")
+    print("  1. Los tres algoritmos son O(n^2): al pasar de 1,000 a 10,000 elementos "
+          "(10 veces mas) el tiempo se multiplico por unas 60 a 80 veces.")
+    print("  2. Con el arreglo ya ordenado, burbuja (con flag) e insercion casi no "
+          "tardan (milesimas de segundo, O(n)), pero seleccion tarda igual que con "
+          "datos aleatorios (unos 4.9 s en n=10,000), porque siempre busca el minimo.")
+    print("  3. El peor caso es el arreglo invertido: burbuja llego a 17.6 s e insercion "
+          "a 10.3 s. Burbuja fue la mas lenta en general, e insercion la mejor opcion "
+          "de las tres cuando los datos estan casi ordenados.")
+    
+    # =============================================================================
+# DECLARACIÓN DE USO DE IA
+# Usé Claude (Anthropic) para comprender y trabajar mi codigo en las burbuja, seleccion, insercion.
+# Ejecuté las pruebas y la tabla de tiempos.
+# Tambien utilize algunos recursos de youtube para comprender mejor los temas del trabajo.
+# =============================================================================
